@@ -1,24 +1,14 @@
 {
-  "name": "teratai-cookies-web",
-  "private": true,
-  "type": "module",
-  "version": "0.1.0",
-  "description": "Website publik Teratai Cookies (terataicookies.com)",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "check": "astro check",
-    "test": "vitest run",
-    "ekspor-katalog": "mariadb -N -r u5653668_teratai < scripts/export-katalog.sql > src/data/katalog-db.json && node scripts/rapikan-ekspor.mjs src/data/katalog-db.json"
-  },
-  "dependencies": {
-    "astro": "^5.18.2"
-  },
-  "devDependencies": {
-    "@astrojs/check": "^0.9.12",
-    "@types/node": "^22.20.5",
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
-  }
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "test": "node --test tests/js/*.test.mjs"
+    },
+    "devDependencies": {
+        "laravel-vite-plugin": "^2.0.0",
+        "vite": "^7.0.7"
+    }
 }
