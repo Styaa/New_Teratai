@@ -30,8 +30,11 @@ Website tetap bisa dipakai selama placeholder ini belum diisi, tetapi **jangan r
 | Proses pembuatan (dibentuk tangan, dll.) | Tentang | `resources/views/pages/tentang.blade.php` |
 | Dapur juga mengolah kacang/susu/telur/terigu | Detail produk | `resources/views/pages/produk/show.blade.php` |
 | Isi "Toples 3 Rasa" | Detail produk | `config/konten-produk.php` |
+| Daya simpan per jenis kue | Detail produk (akordeon) | `resources/views/pages/produk/show.blade.php` |
+| Pengiriman memakai kurir Gojek / Grab | Keranjang | `resources/views/components/cart-drawer.blade.php` |
+| Berat per kemasan (mis. Mika 100 g), bila ingin ditampilkan | Detail produk | belum ada di database admin |
 
-Klaim "tanpa pengawet" dan "sejak 19xx" sengaja **tidak** dipakai sampai dikonfirmasi.
+Klaim "tanpa pengawet", "sejak 19xx", dan "mentega Wijsman murni" sengaja **tidak** dipakai sampai dikonfirmasi. Begitu juga nomor WA, Instagram, dan jam buka yang tertera di desain referensi (lihat `docs/DESAIN.md` bagian 4).
 
 ## C. Foto & konten
 

@@ -6,7 +6,8 @@ Website publik **Jo&S Teratai Cookies & Cake**, Makassar. Berisi katalog kue ker
 - **Katalog langsung dari database admin** `u5653668_teratai` lewat user MySQL read-only, dengan file JSON sebagai cadangan.
 - Tanpa payment gateway. Keranjang disimpan di browser, dan checkout membuka WhatsApp dengan pesan yang sudah terisi.
 - Website **tidak butuh database sendiri**. Session dan cache memakai file.
-- Lighthouse lokal (emulasi HP, `artisan serve`): Performance 96–99, Accessibility 100, Best Practices 100, SEO 100.
+- Desain minimalis mengikuti acuan di **[docs/DESAIN.md](docs/DESAIN.md)**.
+- Lighthouse lokal (emulasi HP, `artisan serve`): Performance 99–100, Accessibility 100, Best Practices 100, SEO 100.
 
 > Sebelum rilis, isi daftar di **[PLACEHOLDER.md](PLACEHOLDER.md)**.
 
@@ -55,8 +56,8 @@ app/
   Support/helpers.php    rupiah(), link_wa(), link_petunjuk_arah(), dll.
   Http/Controllers/      HalamanController, ProdukController
 resources/
-  views/components/      header, footer, product-card, variant-picker, cart-drawer,
-                         outlet-card, seasonal-banner, rak (carousel), foto, logo, icon, jejak
+  views/components/      header, pengumuman (bar musiman), footer, product-card, variant-picker,
+                         cart-drawer, outlet-card, rak, foto, logo, icon, jejak (schema)
   views/pages/           beranda, produk (index, show), hampers, reseller, outlet, tentang, faq
   js/modul/              keranjang, pesan-wa, katalog (filter), detail, form-wa, header, rak, musim
   css/app.css
@@ -107,7 +108,7 @@ mariadb -N -r u5653668_teratai < database/data/export-katalog.sql > database/dat
 
 ## Mode musiman
 
-Isi `TERATAI_MUSIM=lebaran|natal|imlek|reguler` di `.env`, lalu jalankan `php artisan config:clear`. Banner, warna aksen, dan koleksi unggulan ikut berganti tanpa mengubah layout.
+Isi `TERATAI_MUSIM=lebaran|natal|imlek|reguler` di `.env`, lalu jalankan `php artisan config:clear`. Bar pengumuman, warna aksen, dan koleksi unggulan ikut berganti tanpa mengubah layout.
 Untuk pratinjau tanpa mengubah `.env`, buka `/?musim=lebaran`.
 
 ## Foto

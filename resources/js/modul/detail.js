@@ -1,4 +1,4 @@
-import { rupiah } from './pesan-wa';
+import { buatPesanLangsung, linkWa, rupiah } from './pesan-wa';
 
 /** Halaman detail: galeri foto + pemilih kemasan (harga berubah) + tambah ke pesanan. */
 export function initDetail() {
@@ -24,7 +24,7 @@ export function initDetail() {
       const v = terpilih();
       const h = hargaDari(v);
       tampilHarga.textContent = h == null ? 'Tanya harga' : rupiah(h * n());
-      if (tampilVarian) tampilVarian.textContent = n() > 1 ? `${v.dataset.label} × ${n()}` : (v.dataset.label ?? '');
+      if (tampilVarian) tampilVarian.textContent = `(${v.dataset.label}${n() > 1 ? ` × ${n()}` : ''})`;
     };
     form.addEventListener('change', perbarui);
     jumlah.addEventListener('input', perbarui);
@@ -33,6 +33,13 @@ export function initDetail() {
       jumlah.value = String(Math.min(99, Math.max(1, n() + Number(b.dataset.langkah))));
       perbarui();
     }));
+    const itemTerpilih = () => {
+      const v = terpilih();
+      return { nama: form.dataset.nama, varian: v.dataset.label, harga: hargaDari(v), jumlah: n() };
+    };
+    form.querySelector('[data-pesan-langsung]')?.addEventListener('click', () => {
+      window.open(linkWa(form.dataset.wa ?? '', buatPesanLangsung(itemTerpilih())), '_blank', 'noopener');
+    });
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const v = terpilih();

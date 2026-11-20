@@ -3,6 +3,7 @@ export function initRak() {
   document.querySelectorAll('[data-rak]').forEach((rak) => {
     const jalur = rak.querySelector('[data-rak-jalur]');
     const [kiri, kanan] = rak.querySelectorAll('[data-rak-geser]');
+    if (!kiri || !kanan) return; // tanpa tombol panah: cukup geser
     const sinkron = () => {
       kiri.disabled = jalur.scrollLeft < 8;
       kanan.disabled = jalur.scrollLeft + jalur.clientWidth >= jalur.scrollWidth - 8;

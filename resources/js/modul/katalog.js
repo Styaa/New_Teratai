@@ -5,7 +5,7 @@ export function initKatalog() {
   const kartu = [...grid.querySelectorAll('[data-kartu]')];
   const cari = document.querySelector('[data-cari]');
   const urut = document.querySelector('[data-urut]');
-  const chips = [...document.querySelectorAll('.chip[data-kategori]')];
+  const chips = [...document.querySelectorAll('.tab[data-kategori]')];
   const info = document.querySelector('[data-info]');
   const kosong = document.querySelector('[data-kosong]');
 

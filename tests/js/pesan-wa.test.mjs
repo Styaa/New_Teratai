@@ -39,3 +39,10 @@ test('link wa: nomor kosong membuka pemilih kontak', () => {
   assert.equal(linkWa('', 'hai'), 'https://wa.me/?text=hai');
   assert.equal(linkWa('+62 812-3456', 'a b'), 'https://wa.me/628123456?text=a%20b');
 });
+
+test('pesan langsung satu item dari halaman produk', async () => {
+  const { buatPesanLangsung } = await import('../../resources/js/modul/pesan-wa.js');
+  const t = buatPesanLangsung({ nama: 'Nastar', varian: 'Toples Bulat', harga: 90000, jumlah: 2 });
+  assert.match(t, /Nastar \(Toples Bulat\)\n2 x Rp 90\.000 = Rp 180\.000/);
+  assert.match(t, /Mohon info ketersediaan/);
+});

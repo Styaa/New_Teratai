@@ -4,43 +4,42 @@
     deskripsi="Daftar lengkap kue kering Makassar dari Teratai: nastar, kastengel, kue keju, mente, belinjo, cake, dan hampers. Lihat harga per kemasan dan pesan via WhatsApp."
 >
     <x-jejak :jejak="[['nama' => 'Produk', 'url' => route('produk.index')]]" />
-    <header class="wadah kepala-halaman">
-        <h1>Semua Kue</h1>
-        <p class="lead">Kue kering dalam berbagai kemasan, cake, dan hampers. Pilih rasa, lalu tentukan kemasan di halaman produk.</p>
-    </header>
+    <section class="wadah katalog" aria-labelledby="judul-katalog">
+        <header class="kepala-halaman" style="padding-bottom:0">
+            <h1 id="judul-katalog">Katalog Produk</h1>
+            <p class="lead">Kue kering rumahan dalam berbagai kemasan, cake, dan hampers dari dapur Teratai, Makassar.</p>
+        </header>
 
-    <div class="saring" data-saring>
-        <div class="wadah saring__isi">
-            <div class="saring__cari">
-                <x-icon nama="cari" :ukuran="20" />
-                <label for="cari-produk" class="sr-only">Cari kue</label>
-                <input id="cari-produk" type="search" class="input" placeholder="Cari nastar, keju, hampers…" autocomplete="off" data-cari>
+        <div class="toolbar">
+            <div class="tab-kategori" role="group" aria-label="Filter kategori">
+                <button type="button" class="tab" aria-pressed="true" data-kategori="">Semua <span class="angka">{{ $produk->count() }}</span></button>
+                @foreach ($jumlah as $id => $n)
+                    <button type="button" class="tab" aria-pressed="false" data-kategori="{{ $id }}">{{ config("katalog.kategori.$id") }} <span class="angka">{{ $n }}</span></button>
+                @endforeach
             </div>
-            <div class="saring__baris">
-                <div class="saring__kategori" role="group" aria-label="Filter kategori">
-                    <button type="button" class="chip" aria-pressed="true" data-kategori="">Semua <span class="angka">{{ $produk->count() }}</span></button>
-                    @foreach ($jumlah as $id => $n)
-                        <button type="button" class="chip" aria-pressed="false" data-kategori="{{ $id }}">{{ config("katalog.kategori.$id") }} <span class="angka">{{ $n }}</span></button>
-                    @endforeach
+            <div class="toolbar__alat">
+                <div class="cari">
+                    <x-icon nama="cari" />
+                    <label for="cari-produk" class="sr-only">Cari kue</label>
+                    <input id="cari-produk" type="search" placeholder="Cari rasa kue…" autocomplete="off" data-cari>
                 </div>
-                <div class="saring__urut">
-                    <label for="urut-produk">Urutkan</label>
-                    <select id="urut-produk" class="input" data-urut>
-                        <option value="terlaris">Terlaris</option>
+                <div class="urut">
+                    <label for="urut-produk" class="sr-only">Urutkan</label>
+                    <select id="urut-produk" data-urut>
+                        <option value="terlaris">Terpopuler</option>
                         <option value="harga-naik">Harga terendah</option>
                         <option value="harga-turun">Harga tertinggi</option>
                         <option value="nama">Nama A–Z</option>
                     </select>
+                    <x-icon nama="bawah" />
                 </div>
             </div>
         </div>
-    </div>
 
-    <section class="wadah katalog" aria-label="Daftar produk">
         <p class="katalog__info" role="status" data-info>{{ $produk->count() }} produk</p>
         <div class="grid-produk" data-grid>
             @foreach ($produk as $p)
-                <x-product-card :produk="$p" :eager="$loop->index < 4" tingkat="h2" />
+                <x-product-card :produk="$p" :eager="$loop->index < 3" tingkat="h2" />
             @endforeach
         </div>
         <div class="katalog__kosong" data-kosong hidden>

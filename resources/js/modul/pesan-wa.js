@@ -38,3 +38,17 @@ export function buatPesanWa(p) {
   baris.push('', 'Terima kasih.');
   return baris.join('\n');
 }
+
+/** Pesan singkat untuk tombol "Pesan via WhatsApp" di halaman produk (satu item, tanpa keranjang). */
+export function buatPesanLangsung(i) {
+  const varian = i.varian && i.varian !== 'Standar' ? ` (${i.varian})` : '';
+  const harga = i.harga != null ? `${i.jumlah} x ${rupiah(i.harga)} = ${rupiah(i.harga * i.jumlah)}` : `${i.jumlah} x (harga mohon dikonfirmasi)`;
+  return [
+    'Halo Teratai Cookies, saya mau pesan:',
+    '',
+    `${i.nama}${varian}`,
+    harga,
+    '',
+    'Mohon info ketersediaan, cara pengambilan, dan pembayarannya. Terima kasih.',
+  ].join('\n');
+}

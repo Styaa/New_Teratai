@@ -6,23 +6,26 @@
 >
     <x-jejak :jejak="[['nama' => 'FAQ', 'url' => route('faq')]]" />
     <header class="wadah kepala-halaman">
-        <span class="eyebrow">FAQ</span>
-        <h1>Pertanyaan yang sering ditanyakan</h1>
+        <h1>Pertanyaan Umum</h1>
         <p class="lead">Belum menemukan jawabannya? Tanyakan langsung lewat WhatsApp.</p>
     </header>
 
-    <div class="wadah faq">
-        @foreach ($grup as $g)
-            <section aria-label="{{ $g['judul'] }}" class="faq__grup">
-                <h2>{{ $g['judul'] }}</h2>
-                @foreach ($g['daftar'] as $q)
-                    <details class="faq__item">
-                        <summary>{{ $q['t'] }}<x-icon nama="bawah" :ukuran="20" /></summary>
-                        <p>{!! tanda($q['j']) !!}</p>
-                    </details>
-                @endforeach
-            </section>
-        @endforeach
-        <a class="btn btn--wa" href="{{ link_wa(config('teratai.whatsapp'), 'Halo Teratai Cookies, saya mau bertanya.') }}" target="_blank" rel="noopener"><x-icon nama="whatsapp" /> Tanya via WhatsApp</a>
-    </div>
+    <section class="bagian" aria-label="Daftar pertanyaan">
+        <div class="wadah faq">
+            @foreach ($grup as $g)
+                <div class="faq__grup">
+                    <h2>{{ $g['judul'] }}</h2>
+                    <div class="akordeon">
+                        @foreach ($g['daftar'] as $q)
+                            <details>
+                                <summary>{{ $q['t'] }} <x-icon nama="bawah" /></summary>
+                                <div class="akordeon__isi"><p>{!! tanda($q['j']) !!}</p></div>
+                            </details>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+            <p class="catatan"><a class="btn" href="{{ link_wa(config('teratai.whatsapp'), 'Halo Teratai Cookies, saya mau bertanya.') }}" target="_blank" rel="noopener"><x-icon nama="whatsapp" /> Tanya via WhatsApp</a></p>
+        </div>
+    </section>
 </x-layouts.app>

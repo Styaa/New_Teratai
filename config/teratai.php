@@ -91,6 +91,7 @@ return [
     'musim_daftar' => [
         'reguler' => [
             'label' => 'Reguler',
+            'pengumuman' => 'Hampers & hantaran untuk keluarga dan kantor bisa dipesan sepanjang tahun.',
             'banner' => [
                 'eyebrow' => 'Hantaran & hampers',
                 'judul' => 'Hadiah manis untuk orang terdekat',
@@ -101,6 +102,7 @@ return [
         ],
         'lebaran' => [
             'label' => 'Lebaran',
+            'pengumuman' => 'Pre-order kue Lebaran & hampers musiman dibuka. Ambil di outlet Pelita & Hertasning.',
             'banner' => [
                 'eyebrow' => 'Koleksi Lebaran',
                 'judul' => 'Toples Lebaran sudah bisa dipesan',
@@ -111,6 +113,7 @@ return [
         ],
         'natal' => [
             'label' => 'Natal',
+            'pengumuman' => 'Pre-order kue Natal & hampers musiman dibuka. Ambil di outlet Pelita & Hertasning.',
             'banner' => [
                 'eyebrow' => 'Koleksi Natal',
                 'judul' => 'Kue dan hampers Natal sudah dibuka',
@@ -121,6 +124,7 @@ return [
         ],
         'imlek' => [
             'label' => 'Imlek',
+            'pengumuman' => 'Pre-order hampers Imlek dibuka. Ambil di outlet Pelita & Hertasning.',
             'banner' => [
                 'eyebrow' => 'Koleksi Imlek',
                 'judul' => 'Hampers Imlek untuk keluarga dan relasi',

@@ -1,16 +1,10 @@
 @php
     // Harga reseller TIDAK ditampilkan di publik. Admin mengirim daftar harga setelah pendaftaran.
     $keuntungan = [
-        ['ikon' => 'kartu', 'judul' => 'Harga khusus reseller', 'teks' => 'Daftar harga reseller dikirim langsung oleh admin setelah kamu mendaftar.'],
-        ['ikon' => 'bintang', 'judul' => 'Produk yang sudah dikenal', 'teks' => 'Nastar, keju coklat, mente, dan rasa lain yang paling sering dipesan pelanggan kami.'],
-        ['ikon' => 'kalender', 'judul' => 'Stok untuk musim ramai', 'teks' => 'Siapkan stok Lebaran, Natal, dan Imlek lebih awal bersama kami.'],
-        ['ikon' => 'toko', 'judul' => 'Ambil di 2 outlet', 'teks' => 'Ambil pesanan di Pelita atau Hertasning, sesuai yang terdekat.'],
-    ];
-    $langkah = [
-        'Isi formulir singkat di halaman ini.',
-        'Pesan terbuka di WhatsApp. Kirim ke admin Teratai.',
-        'Admin mengirim daftar harga reseller dan syarat pemesanan.',
-        'Pesan stok pertamamu, lalu mulai berjualan.',
+        ['judul' => 'Harga khusus reseller', 'teks' => 'Daftar harga reseller dikirim langsung oleh admin setelah kamu mendaftar.'],
+        ['judul' => 'Produk yang sudah dikenal', 'teks' => 'Nastar, keju coklat, mente, dan rasa lain yang paling sering dipesan.'],
+        ['judul' => 'Stok untuk musim ramai', 'teks' => 'Siapkan stok Lebaran, Natal, dan Imlek lebih awal bersama kami.'],
+        ['judul' => 'Ambil di 2 outlet', 'teks' => 'Ambil pesanan di Pelita atau Hertasning, sesuai yang terdekat.'],
     ];
 @endphp
 <x-layouts.app
@@ -20,35 +14,35 @@
 >
     <x-jejak :jejak="[['nama' => 'Reseller', 'url' => route('reseller')]]" />
     <header class="wadah kepala-halaman">
-        <span class="eyebrow">Program reseller</span>
-        <h1>Jualan kue Teratai bersama kami</h1>
-        <p class="lead">Untuk kamu yang ingin menjual kue kering rumahan dengan harga khusus reseller, baik untuk toko, kantor, maupun jualan online.</p>
+        <h1>Program Reseller</h1>
+        <p class="lead">Untuk kamu yang ingin menjual kue kering rumahan Teratai dengan harga khusus, baik di toko, kantor, maupun online.</p>
     </header>
 
     <section class="bagian" aria-labelledby="judul-untung">
         <div class="wadah">
-            <h2 id="judul-untung">Keuntungan jadi reseller</h2>
-            <ul class="untung">
-                @foreach ($keuntungan as $k)
-                    <li><span class="untung__ikon"><x-icon :nama="$k['ikon']" /></span><strong>{{ $k['judul'] }}</strong><span>{{ $k['teks'] }}</span></li>
-                @endforeach
+            <div class="kepala-bagian"><h2 id="judul-untung">Keuntungan</h2></div>
+            <ul class="langkah langkah--4">
+                @foreach ($keuntungan as $k)<li><strong>{{ $k['judul'] }}</strong>{{ $k['teks'] }}</li>@endforeach
             </ul>
             <p class="catatan"><span class="tanda">[perlu konfirmasi]</span> Syarat reseller (minimal order, sistem pembayaran) belum dicantumkan.</p>
         </div>
     </section>
 
-    <section class="bagian bagian--cream" aria-labelledby="judul-daftar">
-        <div class="wadah daftar-grid">
+    <section class="bagian" aria-labelledby="judul-daftar">
+        <div class="wadah dua-kolom">
             <div>
-                <span class="eyebrow">Cara daftar</span>
-                <h2 id="judul-daftar">Empat langkah mudah</h2>
-                <ol class="langkah">
-                    @foreach ($langkah as $l)<li><span class="angka">{{ $loop->iteration }}</span>{{ $l }}</li>@endforeach
-                </ol>
+                <div class="kepala-bagian"><h2 id="judul-daftar">Cara Daftar</h2></div>
+                <ul class="daftar-info">
+                    <li><strong>1.</strong> Isi formulir singkat di halaman ini.</li>
+                    <li><strong>2.</strong> Pesan terbuka di WhatsApp. Kirim ke admin Teratai.</li>
+                    <li><strong>3.</strong> Admin mengirim daftar harga reseller dan syarat pemesanan.</li>
+                    <li><strong>4.</strong> Pesan stok pertamamu, lalu mulai berjualan.</li>
+                </ul>
             </div>
 
-            <div class="form-kartu">
-                <h3>Formulir pendaftaran</h3>
+            <div class="panel-form">
+                <h2>Formulir pendaftaran</h2>
+                <p>Data hanya dikirim lewat WhatsApp ke admin Teratai, tidak disimpan di website.</p>
                 <form data-form-wa data-wa="{{ config('teratai.whatsapp') }}" data-pembuka="Halo Teratai Cookies, saya mau daftar jadi reseller:">
                     <div class="bidang">
                         <label for="rs-nama">Nama lengkap</label>
@@ -62,7 +56,7 @@
                     </div>
                     <fieldset class="bidang">
                         <legend>Cara berjualan</legend>
-                        <div class="pilihan-kotak pilihan-kotak--baris">
+                        <div class="opsi opsi--baris">
                             <label><input type="checkbox" name="cara" value="Toko / kios"> Toko / kios</label>
                             <label><input type="checkbox" name="cara" value="Online"> Online</label>
                             <label><input type="checkbox" name="cara" value="Kantor / komunitas"> Kantor</label>
@@ -77,10 +71,9 @@
                     </div>
                     <div class="bidang">
                         <label for="rs-catatan">Pesan <span class="bantu">(opsional)</span></label>
-                        <textarea id="rs-catatan" name="catatan" class="input" placeholder="Mis. produk yang ingin dijual, perkiraan jumlah per bulan"></textarea>
+                        <textarea id="rs-catatan" name="catatan" class="input" placeholder="Produk yang ingin dijual, perkiraan jumlah per bulan"></textarea>
                     </div>
-                    <button type="submit" class="btn btn--wa btn--penuh"><x-icon nama="whatsapp" /> Kirim via WhatsApp</button>
-                    <p class="bantu-form">Data hanya dikirim lewat WhatsApp ke admin Teratai, tidak disimpan di website.</p>
+                    <button type="submit" class="btn btn--penuh"><x-icon nama="whatsapp" /> Kirim via WhatsApp</button>
                 </form>
             </div>
         </div>

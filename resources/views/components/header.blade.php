@@ -1,5 +1,6 @@
 @php
     $nav = [
+        ['route' => 'beranda', 'label' => 'Beranda', 'aktif' => '/'],
         ['route' => 'produk.index', 'label' => 'Produk', 'aktif' => 'produk*'],
         ['route' => 'hampers', 'label' => 'Hampers', 'aktif' => 'hampers'],
         ['route' => 'reseller', 'label' => 'Reseller', 'aktif' => 'reseller'],
@@ -26,6 +27,9 @@
                 <x-icon nama="keranjang" />
                 <span class="ikon-btn__jumlah angka" data-jumlah-keranjang hidden>0</span>
             </button>
+            <a class="header__wa" href="{{ link_wa(config('teratai.whatsapp'), 'Halo Teratai Cookies, saya mau tanya tentang kue.') }}" target="_blank" rel="noopener">
+                <x-icon nama="whatsapp" /> WhatsApp
+            </a>
             <button type="button" class="ikon-btn header__menu-btn" aria-expanded="false" aria-controls="menu-utama" data-tombol-menu>
                 <x-icon nama="menu" class="ikon-menu" />
                 <x-icon nama="tutup" class="ikon-tutup" />

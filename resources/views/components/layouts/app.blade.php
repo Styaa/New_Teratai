@@ -40,7 +40,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+    {{-- Font dimuat tanpa memblokir render: teks tampil dulu dengan font sistem, lalu berganti. --}}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap"></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @foreach ($daftarLd as $ld)
         <script type="application/ld+json">{!! json_encode($ld, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
@@ -48,6 +51,7 @@
 </head>
 <body class="hal-{{ $hal }}">
     <a class="lewati" href="#konten">Langsung ke konten</a>
+    <x-pengumuman />
     <x-header />
     <main id="konten" tabindex="-1">
         {{ $slot }}
