@@ -1,0 +1,21 @@
+{
+  "name": "teratai-cookies-web",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Website publik Teratai Cookies (terataicookies.com)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "ekspor-katalog": "mariadb -N -r u5653668_teratai < scripts/export-katalog.sql > src/data/katalog-db.json && node scripts/rapikan-ekspor.mjs src/data/katalog-db.json"
+  },
+  "dependencies": {
+    "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+*.sql
+*.sql.gz
+!scripts/*.sql
+.DS_Store
