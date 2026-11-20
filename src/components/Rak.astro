@@ -1,0 +1,59 @@
+---
+/** Carousel horizontal (scroll-snap) tanpa autoplay. Tombol panah hanya di layar lebar. */
+import Icon from './Icon.astro';
+interface Props { label: string }
+const { label } = Astro.props;
+---
+<div class="rak" data-rak>
+  <div class="rak__jalur" role="region" aria-label={label} tabindex="0" data-rak-jalur>
+    <slot />
+  </div>
+  <div class="rak__kontrol">
+    <button type="button" class="rak__btn" data-rak-geser="-1" aria-label="Sebelumnya"><Icon nama="kiri" /></button>
+    <button type="button" class="rak__btn" data-rak-geser="1" aria-label="Berikutnya"><Icon nama="kanan" /></button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rak]').forEach((rak) => {
+    const jalur = rak.querySelector<HTMLElement>('[data-rak-jalur]')!;
+    const [kiri, kanan] = rak.querySelectorAll<HTMLButtonElement>('[data-rak-geser]');
+    const sinkron = () => {
+      kiri.disabled = jalur.scrollLeft < 8;
+      kanan.disabled = jalur.scrollLeft + jalur.clientWidth >= jalur.scrollWidth - 8;
+    };
+    rak.querySelectorAll<HTMLButtonElement>('[data-rak-geser]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const kurang = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        jalur.scrollBy({ left: Number(b.dataset.rakGeser) * jalur.clientWidth * 0.85, behavior: kurang ? 'auto' : 'smooth' });
+      }));
+    jalur.addEventListener('scroll', sinkron, { passive: true });
+    addEventListener('resize', sinkron);
+    sinkron();
+  });
+</script>
+
+<style>
+  .rak { position: relative; }
+  .rak__jalur {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 62%; gap: 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+    padding: 4px var(--gutter) 8px; margin-inline: calc(var(--gutter) * -1);
+    scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .rak__jalur::-webkit-scrollbar { display: none; }
+  .rak__jalur > :global(*) { scroll-snap-align: start; }
+  .rak__jalur:focus-visible { outline-offset: -3px; }
+  @media (min-width: 640px) { .rak__jalur { grid-auto-columns: 38%; gap: 20px; } }
+  @media (min-width: 1024px) { .rak__jalur { grid-auto-columns: calc((100% - 72px) / 4); gap: 24px; margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; } }
+  .rak__kontrol { display: none; }
+  @media (min-width: 1024px) {
+    .rak__kontrol { display: flex; gap: 8px; position: absolute; top: -76px; right: 0; }
+  }
+  .rak__btn {
+    width: 48px; height: 48px; border-radius: 999px; border: 1.5px solid var(--garis-tegas); background: #fff;
+    display: grid; place-items: center; cursor: pointer; transition: border-color var(--durasi), background var(--durasi);
+  }
+  .rak__btn:hover:not(:disabled) { border-color: var(--espresso); }
+  .rak__btn:disabled { opacity: 0.35; cursor: default; }
+</style>

@@ -1,0 +1,63 @@
+---
+import type { Produk } from '@/lib/types';
+import { rupiah } from '@/lib/pesan-wa';
+import Foto from './Foto.astro';
+
+interface Props { produk: Produk; eager?: boolean; musim?: boolean; tingkat?: 'h2' | 'h3' }
+const { produk: p, eager = false, musim = false, tingkat = 'h3' } = Astro.props;
+const Judul = tingkat;
+const jenis = p.kategori === 'hampers' ? 'hampers' : p.kategori === 'cake' ? 'cake' : p.kategori === 'snack' ? 'kue' : 'toples';
+const harga = p.hargaMulai == null ? 'Tanya harga' : p.varian.length > 1 && p.hargaTertinggi !== p.hargaMulai ? `mulai ${rupiah(p.hargaMulai)}` : rupiah(p.hargaMulai);
+---
+<article
+  class="kartu"
+  data-kartu
+  data-kategori={p.kategori}
+  data-nama={`${p.nama} ${p.varian.map((v) => v.nama).join(' ')} ${p.merek ?? ''}`.toLowerCase()}
+  data-harga={p.hargaMulai ?? 0}
+  data-peringkat={p.peringkat}
+  data-best={p.best ? '1' : '0'}
+>
+  <div class="kartu__foto">
+    <Foto foto={p.foto[0]} jenis={jenis} rasio="4 / 5" eager={eager} sizes="(min-width: 1024px) 270px, (min-width: 640px) 33vw, 50vw" />
+    <div class="kartu__badge">
+      {p.best && <span class="badge badge--favorit">Favorit</span>}
+      {musim && <span class="badge badge--musim">Musiman</span>}
+    </div>
+  </div>
+  <div class="kartu__isi">
+    {p.merek && <span class="kartu__merek">{p.merek}</span>}
+    <Judul class="kartu__nama"><a href={`/produk/${p.slug}/`} class="kartu__tautan">{p.nama}</a></Judul>
+    <p class="kartu__ringkas">{p.ringkas}</p>
+    <p class="kartu__harga harga">{harga}</p>
+    {p.varian.length > 1 && <p class="kartu__varian">{p.varian.length} pilihan {p.labelVarian.toLowerCase()}</p>}
+  </div>
+</article>
+
+<style>
+  .kartu { position: relative; display: flex; flex-direction: column; min-width: 0; }
+  .kartu__foto {
+    position: relative; border-radius: var(--r-lg); overflow: hidden; background: var(--cream);
+    transition: box-shadow var(--durasi) var(--ease), transform 400ms var(--ease);
+  }
+  .kartu__foto :global(.foto) { transition: transform 600ms var(--ease); }
+  .kartu:hover .kartu__foto { box-shadow: var(--bayang-angkat); }
+  .kartu:hover .kartu__foto :global(.foto) { transform: scale(1.03); }
+  .kartu__badge { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 3; }
+  .kartu__isi { padding: 12px 2px 0; display: grid; gap: 2px; }
+  .kartu__merek { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teks-aksen); }
+  .kartu__nama { font-size: 1rem; margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+  @media (min-width: 640px) { .kartu__nama { font-size: 1.0625rem; } }
+  .kartu__tautan { text-decoration: none; }
+  /* seluruh kartu dapat diklik, tanpa membungkus konten dalam <a> besar */
+  .kartu__tautan::after { content: ''; position: absolute; inset: 0; z-index: 4; border-radius: var(--r-lg); }
+  .kartu__tautan:focus-visible { outline: none; }
+  .kartu__tautan:focus-visible::after { outline: 3px solid var(--terracotta-tua); outline-offset: 4px; }
+  .kartu__ringkas {
+    margin: 2px 0 6px; font-size: 0.8125rem; color: var(--teks-2); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  @media (max-width: 399px) { .kartu__ringkas { display: none; } }
+  .kartu__harga { margin: 0; font-weight: 600; font-size: 0.9375rem; }
+  .kartu__varian { margin: 0; font-size: 0.75rem; color: var(--teks-2); }
+</style>

@@ -1,0 +1,156 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Jejak from '@/components/Jejak.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import { KATEGORI, getKatalog } from '@/lib/katalog';
+
+const katalog = await getKatalog();
+// urutan awal (tanpa JS): terlaris, favorit dulu
+const urut = [...katalog].sort((a, b) => Number(b.best) - Number(a.best) || a.peringkat - b.peringkat);
+const jumlah = Object.fromEntries(KATEGORI.map((k) => [k.id, katalog.filter((p) => p.kategori === k.id).length]));
+---
+<Base
+  judul="Katalog Kue Kering, Cake & Hampers"
+  deskripsi="Daftar lengkap kue kering Makassar dari Teratai: nastar, kastengel, kue keju, mente, belinjo, cake, dan hampers. Lihat harga per kemasan dan pesan via WhatsApp."
+>
+  <Jejak jejak={[{ nama: 'Produk', href: '/produk/' }]} />
+  <header class="wadah kepala-halaman">
+    <h1>Semua Kue</h1>
+    <p class="lead">Kue kering dalam berbagai kemasan, cake, dan hampers. Pilih rasa, lalu tentukan kemasan di halaman produk.</p>
+  </header>
+
+  <div class="saring" data-saring>
+    <div class="wadah saring__isi">
+      <div class="saring__cari">
+        <Icon nama="cari" ukuran={20} />
+        <label for="cari-produk" class="sr-only">Cari kue</label>
+        <input id="cari-produk" type="search" class="input" placeholder="Cari nastar, keju, hampers…" autocomplete="off" data-cari />
+      </div>
+      <div class="saring__baris">
+        <div class="saring__kategori" role="group" aria-label="Filter kategori">
+          <button type="button" class="chip" aria-pressed="true" data-kategori="">Semua <span class="angka">{katalog.length}</span></button>
+          {KATEGORI.filter((k) => jumlah[k.id]).map((k) => (
+            <button type="button" class="chip" aria-pressed="false" data-kategori={k.id}>{k.nama} <span class="angka">{jumlah[k.id]}</span></button>
+          ))}
+        </div>
+        <div class="saring__urut">
+          <label for="urut-produk">Urutkan</label>
+          <select id="urut-produk" class="input" data-urut>
+            <option value="terlaris">Terlaris</option>
+            <option value="harga-naik">Harga terendah</option>
+            <option value="harga-turun">Harga tertinggi</option>
+            <option value="nama">Nama A–Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="wadah katalog" aria-label="Daftar produk">
+    <p class="katalog__info" role="status" data-info>{katalog.length} produk</p>
+    <div class="grid-produk" data-grid>
+      {urut.map((p, i) => <ProductCard produk={p} eager={i < 4} tingkat="h2" />)}
+    </div>
+    <div class="katalog__kosong" data-kosong hidden>
+      <p><strong>Belum ketemu kue yang kamu cari.</strong></p>
+      <p>Coba kata lain, atau tanyakan langsung lewat WhatsApp. Kami juga menerima pesanan khusus.</p>
+      <button type="button" class="btn btn--garis" data-reset>Tampilkan semua</button>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-grid]')!;
+  const kartu = [...grid.querySelectorAll<HTMLElement>('[data-kartu]')];
+  const cari = document.querySelector<HTMLInputElement>('[data-cari]')!;
+  const urut = document.querySelector<HTMLSelectElement>('[data-urut]')!;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-kategori]')].filter((b) => b.classList.contains('chip'));
+  const info = document.querySelector<HTMLElement>('[data-info]')!;
+  const kosong = document.querySelector<HTMLElement>('[data-kosong]')!;
+
+  const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[^\w\s]/g, '').trim();
+  const params = new URLSearchParams(location.search);
+  let kategori = params.get('kategori') ?? '';
+  cari.value = params.get('q') ?? '';
+  if (params.get('urut')) urut.value = params.get('urut')!;
+  if (!chips.some((c) => c.dataset.kategori === kategori)) kategori = '';
+
+  const pembanding: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+    'terlaris': (a, b) => Number(b.dataset.best) - Number(a.dataset.best) || Number(a.dataset.peringkat) - Number(b.dataset.peringkat),
+    'harga-naik': (a, b) => Number(a.dataset.harga) - Number(b.dataset.harga),
+    'harga-turun': (a, b) => Number(b.dataset.harga) - Number(a.dataset.harga),
+    'nama': (a, b) => (a.querySelector('a')!.textContent ?? '').localeCompare(b.querySelector('a')!.textContent ?? '', 'id'),
+  };
+
+  function terapkan(simpanUrl = true) {
+    const q = norm(cari.value);
+    const kata = q.split(/\s+/).filter(Boolean);
+    let n = 0;
+    kartu.sort(pembanding[urut.value] ?? pembanding.terlaris).forEach((k) => {
+      const cocok = (!kategori || k.dataset.kategori === kategori) && kata.every((w) => norm(k.dataset.nama ?? '').includes(w));
+      k.hidden = !cocok;
+      if (cocok) n++;
+      grid.appendChild(k);
+    });
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.kategori === kategori)));
+    info.textContent = `${n} produk${q ? ` untuk “${cari.value.trim()}”` : ''}`;
+    kosong.hidden = n > 0;
+    if (simpanUrl) {
+      const p = new URLSearchParams();
+      if (kategori) p.set('kategori', kategori);
+      if (q) p.set('q', cari.value.trim());
+      if (urut.value !== 'terlaris') p.set('urut', urut.value);
+      history.replaceState(null, '', `${location.pathname}${p.size ? `?${p}` : ''}`);
+    }
+  }
+
+  chips.forEach((c) => c.addEventListener('click', () => { kategori = c.dataset.kategori ?? ''; terapkan(); }));
+  let t: number | undefined;
+  cari.addEventListener('input', () => { clearTimeout(t); t = window.setTimeout(terapkan, 120); });
+  urut.addEventListener('change', () => terapkan());
+  document.querySelector('[data-reset]')!.addEventListener('click', () => { kategori = ''; cari.value = ''; terapkan(); cari.focus(); });
+  terapkan(false);
+</script>
+
+<style>
+  .saring { z-index: 20; background: rgb(251 248 244 / 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--garis); padding-block: 12px; margin-top: 8px; }
+  .saring__isi { display: grid; gap: 10px; }
+  .saring__cari { position: relative; }
+  .saring__cari :global(svg) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--teks-2); pointer-events: none; }
+  .saring__cari .input { padding-left: 44px; border-radius: 999px; }
+  .saring__baris { display: flex; gap: 10px; align-items: center; justify-content: space-between; min-width: 0; }
+  .saring__kategori {
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0;
+    margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+  }
+  .saring__kategori::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px;
+    border: 1.5px solid var(--garis-tegas); background: #fff; font-weight: 500; font-size: 0.9375rem; cursor: pointer; white-space: nowrap;
+    transition: background var(--durasi), color var(--durasi), border-color var(--durasi);
+  }
+  .chip span { font-size: 0.75rem; color: var(--teks-2); }
+  .chip:hover { border-color: var(--espresso); }
+  .chip[aria-pressed='true'] { background: var(--espresso); border-color: var(--espresso); color: #fff; }
+  .chip[aria-pressed='true'] span { color: #d8ccc1; }
+  .saring__urut { display: none; }
+  .saring__urut label { font-size: 0.875rem; color: var(--teks-2); white-space: nowrap; }
+  .saring__urut .input { width: auto; min-height: 44px; padding-block: 8px; border-radius: 999px; padding-right: 36px; }
+  @media (max-width: 767px) {
+    .saring__baris { flex-wrap: wrap; }
+    .saring__urut { display: flex; align-items: center; gap: 8px; width: 100%; }
+    .saring__urut .input { flex: 1; }
+  }
+  @media (min-width: 768px) {
+    .saring { position: sticky; top: var(--header-h); }
+    .saring__isi { grid-template-columns: minmax(240px, 320px) 1fr; align-items: center; gap: 16px; }
+    .saring__kategori { margin: 0; padding: 0; }
+    .saring__urut { display: flex; align-items: center; gap: 8px; }
+  }
+  .katalog { padding-block: 20px 80px; }
+  .katalog__info { font-size: 0.875rem; color: var(--teks-2); margin-bottom: 16px; }
+  .katalog :global([data-kartu][hidden]) { display: none; }
+  .katalog__kosong { text-align: center; padding: 48px 16px; max-width: 460px; margin: 0 auto; color: var(--teks-2); }
+  .katalog__kosong[hidden] { display: none; }
+</style>

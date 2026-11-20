@@ -1,0 +1,44 @@
+---
+import Base from '@/layouts/Base.astro';
+import Jejak from '@/components/Jejak.astro';
+import OutletCard from '@/components/OutletCard.astro';
+import { OUTLET, SITUS } from '@/config/situs';
+import { schemaBisnis } from '@/lib/seo';
+---
+<Base
+  judul="Outlet Teratai Cookies di Makassar: Pelita & Hertasning"
+  deskripsi="Alamat, jam buka, dan petunjuk arah outlet Teratai Cookies Makassar: Jl. Pelita Raya No. 28 (Balla Parang) dan Jl. Aroeppala No. 6 (Hertasning)."
+  jsonLd={schemaBisnis()}
+>
+  <Jejak jejak={[{ nama: 'Outlet', href: '/outlet/' }]} />
+  <header class="wadah kepala-halaman">
+    <span class="eyebrow">Outlet</span>
+    <h1>Mampir ke dapur kami</h1>
+    <p class="lead">Dua outlet di Kecamatan Rappocini, Makassar. Ambil pesananmu di outlet terdekat, atau datang langsung untuk memilih kue.</p>
+  </header>
+  <section class="wadah grid-outlet" aria-label="Daftar outlet">
+    {OUTLET.map((o) => <OutletCard outlet={o} peta tingkat="h2" />)}
+  </section>
+  <section class="wadah ojol" aria-label="Pesan online">
+    <h2>Pesan lewat aplikasi</h2>
+    <p>
+      {SITUS.grabfood || SITUS.gofood ? (
+        <>
+          {SITUS.grabfood && <a href={SITUS.grabfood} target="_blank" rel="noopener">GrabFood</a>}
+          {SITUS.grabfood && SITUS.gofood && ' · '}
+          {SITUS.gofood && <a href={SITUS.gofood} target="_blank" rel="noopener">GoFood</a>}
+        </>
+      ) : (
+        <span class="tanda">[link GrabFood / GoFood bila ada]</span>
+      )}
+    </p>
+  </section>
+</Base>
+
+<style>
+  .grid-outlet { display: grid; gap: 20px; padding-bottom: 32px; }
+  @media (min-width: 900px) { .grid-outlet { grid-template-columns: 1fr 1fr; gap: 28px; } }
+  .ojol { padding-bottom: 80px; }
+  .ojol h2 { font-size: 1.25rem; }
+  .ojol a { color: var(--teks-aksen); font-weight: 600; }
+</style>

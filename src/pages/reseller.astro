@@ -1,0 +1,118 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Jejak from '@/components/Jejak.astro';
+import { OUTLET, SITUS } from '@/config/situs';
+
+// Harga reseller TIDAK ditampilkan di publik. Admin mengirim daftar harga setelah pendaftaran.
+const KEUNTUNGAN = [
+  { ikon: 'kartu', judul: 'Harga khusus reseller', teks: 'Daftar harga reseller dikirim langsung oleh admin setelah kamu mendaftar.' },
+  { ikon: 'bintang', judul: 'Produk yang sudah dikenal', teks: 'Nastar, keju coklat, mente, dan rasa lain yang paling sering dipesan pelanggan kami.' },
+  { ikon: 'kalender', judul: 'Stok untuk musim ramai', teks: 'Siapkan stok Lebaran, Natal, dan Imlek lebih awal bersama kami.' },
+  { ikon: 'toko', judul: 'Ambil di 2 outlet', teks: 'Ambil pesanan di Pelita atau Hertasning, sesuai yang terdekat.' },
+] as const;
+
+const LANGKAH = [
+  'Isi formulir singkat di halaman ini.',
+  'Pesan terbuka di WhatsApp. Kirim ke admin Teratai.',
+  'Admin mengirim daftar harga reseller dan syarat pemesanan.',
+  'Pesan stok pertamamu, lalu mulai berjualan.',
+];
+---
+<Base
+  judul="Program Reseller Kue Kering Makassar"
+  deskripsi="Jadi reseller kue kering Teratai Cookies Makassar. Harga khusus reseller, produk terlaris, dan pengambilan di 2 outlet. Daftar lewat WhatsApp."
+>
+  <Jejak jejak={[{ nama: 'Reseller', href: '/reseller/' }]} />
+  <header class="wadah kepala-halaman">
+    <span class="eyebrow">Program reseller</span>
+    <h1>Jualan kue Teratai bersama kami</h1>
+    <p class="lead">Untuk kamu yang ingin menjual kue kering rumahan dengan harga khusus reseller, baik untuk toko, kantor, maupun jualan online.</p>
+  </header>
+
+  <section class="bagian" aria-labelledby="judul-untung">
+    <div class="wadah">
+      <h2 id="judul-untung">Keuntungan jadi reseller</h2>
+      <ul class="untung">
+        {KEUNTUNGAN.map((k) => (
+          <li><span class="untung__ikon"><Icon nama={k.ikon} /></span><strong>{k.judul}</strong><span>{k.teks}</span></li>
+        ))}
+      </ul>
+      <p class="catatan"><span class="tanda">[perlu konfirmasi]</span> Syarat reseller (minimal order, sistem pembayaran) belum dicantumkan.</p>
+    </div>
+  </section>
+
+  <section class="bagian bagian--cream" aria-labelledby="judul-daftar">
+    <div class="wadah daftar-grid">
+      <div>
+        <span class="eyebrow">Cara daftar</span>
+        <h2 id="judul-daftar">Empat langkah mudah</h2>
+        <ol class="langkah">
+          {LANGKAH.map((l, i) => <li><span class="angka">{i + 1}</span>{l}</li>)}
+        </ol>
+      </div>
+
+      <div class="form-kartu">
+        <h3>Formulir pendaftaran</h3>
+        <form data-form-wa data-wa={SITUS.whatsapp} data-pembuka="Halo Teratai Cookies, saya mau daftar jadi reseller:">
+          <div class="bidang">
+            <label for="rs-nama">Nama lengkap</label>
+            <input id="rs-nama" name="nama" class="input" required autocomplete="name" />
+            <span class="galat" id="galat-rs-nama" data-galat-untuk="nama" hidden>Nama wajib diisi.</span>
+          </div>
+          <div class="bidang">
+            <label for="rs-kota">Kota / area jualan</label>
+            <input id="rs-kota" name="kota" class="input" required placeholder="Mis. Makassar, Gowa, Maros" />
+            <span class="galat" id="galat-rs-kota" data-galat-untuk="kota" hidden>Isi kota atau area jualan.</span>
+          </div>
+          <fieldset class="bidang">
+            <legend>Cara berjualan</legend>
+            <div class="pilihan-kotak pilihan-kotak--baris">
+              <label><input type="checkbox" name="cara" value="Toko / kios" /> Toko / kios</label>
+              <label><input type="checkbox" name="cara" value="Online" /> Online</label>
+              <label><input type="checkbox" name="cara" value="Kantor / komunitas" /> Kantor</label>
+              <label><input type="checkbox" name="cara" value="Titip jual" /> Titip jual</label>
+            </div>
+          </fieldset>
+          <div class="bidang">
+            <label for="rs-outlet">Outlet pengambilan</label>
+            <select id="rs-outlet" name="outlet" class="input">
+              {OUTLET.map((o) => <option>{o.nama}</option>)}
+            </select>
+          </div>
+          <div class="bidang">
+            <label for="rs-catatan">Pesan <span class="bantu">(opsional)</span></label>
+            <textarea id="rs-catatan" name="catatan" class="input" placeholder="Mis. produk yang ingin dijual, perkiraan jumlah per bulan"></textarea>
+          </div>
+          <button type="submit" class="btn btn--wa btn--penuh"><Icon nama="whatsapp" /> Kirim via WhatsApp</button>
+          <p class="bantu-form">Data hanya dikirim lewat WhatsApp ke admin Teratai, tidak disimpan di website.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '@/scripts/form-wa';
+</script>
+
+<style>
+  .untung { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 12px; }
+  @media (min-width: 640px) { .untung { grid-template-columns: 1fr 1fr; gap: 20px; } }
+  @media (min-width: 1024px) { .untung { grid-template-columns: repeat(4, 1fr); } }
+  .untung li { background: #fff; border: 1px solid var(--garis); border-radius: var(--r-lg); padding: 20px; display: grid; gap: 6px; align-content: start; }
+  .untung__ikon { width: 44px; height: 44px; border-radius: 999px; background: var(--cream); display: grid; place-items: center; color: var(--terracotta); margin-bottom: 6px; }
+  .untung strong { font-family: var(--font-judul); font-size: 1.0625rem; }
+  .untung span:last-child { color: var(--teks-2); font-size: 0.9375rem; }
+  .catatan { margin-top: 20px; font-size: 0.875rem; color: var(--teks-2); }
+  .daftar-grid { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .daftar-grid { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; } }
+  .langkah { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 14px; }
+  .langkah li { display: flex; gap: 14px; align-items: flex-start; }
+  .langkah .angka { flex: none; width: 36px; height: 36px; border-radius: 999px; background: var(--tombol); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.9375rem; }
+  .form-kartu { background: #fff; border: 1px solid var(--garis); border-radius: var(--r-lg); padding: 24px; box-shadow: var(--bayang); }
+  .form-kartu h3 { font-size: 1.25rem; margin-bottom: 16px; }
+  fieldset.bidang { border: 0; padding: 0; margin: 0 0 16px; }
+  .pilihan-kotak--baris { grid-template-columns: 1fr 1fr; }
+  .bantu-form { font-size: 0.8125rem; color: var(--teks-2); margin: 12px 0 0; text-align: center; }
+</style>

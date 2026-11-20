@@ -1,0 +1,58 @@
+---
+/**
+ * Banner musiman. Semua musim dirender, hanya yang aktif terlihat.
+ * Pratinjau: ?musim=lebaran | natal | imlek | reguler (mengganti banner, aksen, dan koleksi tanpa build ulang).
+ */
+import { DAFTAR_MUSIM, MUSIM_AKTIF } from '@/config/musim';
+import Icon from './Icon.astro';
+---
+<section class="banner-musim" aria-label="Info musiman">
+  <div class="wadah">
+    {Object.values(DAFTAR_MUSIM).map((m) => (
+      <div class="banner-musim__kartu" data-musim-isi={m.id} hidden={m.id !== MUSIM_AKTIF}>
+        <div class="banner-musim__hias" aria-hidden="true">
+          <span /><span /><span />
+        </div>
+        <div class="banner-musim__teks">
+          <span class="banner-musim__eyebrow">{m.banner.eyebrow}</span>
+          <h2>{m.banner.judul}</h2>
+          <p>{m.banner.sub}</p>
+        </div>
+        <a href={m.banner.ctaHref} class="btn btn--terang">{m.banner.cta} <Icon nama="panah" /></a>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const q = new URLSearchParams(location.search).get('musim');
+  if (q && document.querySelector(`[data-musim-isi="${q}"]`)) {
+    document.documentElement.dataset.musim = q;
+    document.querySelectorAll<HTMLElement>('[data-musim-isi]').forEach((el) => (el.hidden = el.dataset.musimIsi !== q));
+  }
+</script>
+
+<style>
+  .banner-musim { padding-block: 8px 0; }
+  .banner-musim__kartu {
+    position: relative; overflow: hidden; border-radius: var(--r-lg); padding: 28px 22px;
+    background: linear-gradient(135deg, var(--musim-badge), color-mix(in srgb, var(--musim-badge) 78%, #000));
+    color: #fff; display: grid; gap: 18px; align-items: center;
+  }
+  .banner-musim__kartu[hidden] { display: none; }
+  .banner-musim__eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: color-mix(in srgb, var(--musim-2) 70%, #fff); }
+  .banner-musim h2 { color: #fff; font-size: clamp(1.4rem, 4vw, 2rem); margin: 8px 0 8px; }
+  .banner-musim p { margin: 0; color: rgb(255 255 255 / 0.88); max-width: 56ch; }
+  .banner-musim .btn { justify-self: start; position: relative; z-index: 1; }
+  .banner-musim__teks { position: relative; z-index: 1; }
+  .banner-musim__hias { position: absolute; inset: 0; pointer-events: none; }
+  .banner-musim__hias span {
+    position: absolute; border-radius: 999px; border: 1.5px solid color-mix(in srgb, var(--musim-2) 60%, transparent);
+  }
+  .banner-musim__hias span:nth-child(1) { width: 220px; height: 220px; right: -60px; top: -80px; }
+  .banner-musim__hias span:nth-child(2) { width: 140px; height: 140px; right: 40px; bottom: -70px; border-style: dashed; }
+  .banner-musim__hias span:nth-child(3) { width: 12px; height: 12px; right: 120px; top: 36px; background: var(--musim-2); border: 0; }
+  @media (min-width: 768px) {
+    .banner-musim__kartu { grid-template-columns: 1fr auto; padding: 40px 48px; gap: 32px; }
+  }
+</style>

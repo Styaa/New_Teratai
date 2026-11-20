@@ -1,0 +1,39 @@
+---
+/**
+ * Logo Jo&S Teratai Cookies & Cake.
+ * - Bila file logo asli ada di public/logo.png (atau .webp / .svg), file itu yang dipakai.
+ * - Bila belum ada, dipakai gambar ulang tanda teratai (SVG) + wordmark.
+ * Wordmark di header memakai warna espresso, bukan emas, agar terbaca di latar cream (kontras AA).
+ */
+import { existsSync } from 'node:fs';
+import TandaTeratai from './TandaTeratai.astro';
+interface Props { terang?: boolean }
+const { terang = false } = Astro.props;
+const fileAsli = ['logo.svg', 'logo.webp', 'logo.png'].find((f) => existsSync(`public/${f}`));
+---
+<span class:list={['logo', { 'logo--terang': terang }]}>
+  {fileAsli ? (
+    <img class="logo__gambar" src={`/${fileAsli}`} alt="" width="44" height="44" />
+  ) : (
+    <TandaTeratai class="logo__ikon" />
+  )}
+  <span class="logo__teks">
+    <span class="logo__jos">Jo&amp;S</span>
+    <span class="logo__nama">Teratai</span>
+    <span class="logo__sub">Cookies &amp; Cake</span>
+  </span>
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 10px; color: var(--espresso); }
+  .logo--terang { color: #fff; }
+  .logo :global(.logo__ikon) { width: 46px; height: 37px; flex: none; }
+  .logo__gambar { flex: none; }
+  .logo__gambar { height: 44px; width: 44px; object-fit: contain; }
+  .logo__teks { display: grid; line-height: 1; }
+  .logo__jos { font-family: var(--font-judul); font-weight: 800; font-size: 0.6875rem; letter-spacing: 0.08em; color: #c8182a; }
+  .logo__nama { font-family: var(--font-judul); font-weight: 800; font-size: 1.3125rem; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1px; }
+  .logo__sub { white-space: nowrap; font-size: 0.625rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teks-aksen); margin-top: 3px; }
+  .logo--terang .logo__jos { color: #ff8a8a; }
+  .logo--terang .logo__sub { color: #f1cf6b; }
+</style>

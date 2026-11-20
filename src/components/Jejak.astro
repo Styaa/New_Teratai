@@ -1,0 +1,14 @@
+---
+import { schemaBreadcrumb } from '@/lib/seo';
+interface Props { jejak: { nama: string; href: string }[] }
+const { jejak } = Astro.props;
+const semua = [{ nama: 'Beranda', href: '/' }, ...jejak];
+---
+<nav class="jejak wadah" aria-label="Jejak halaman">
+  <ol>
+    {semua.map((j, i) => (
+      <li>{i === semua.length - 1 ? <span aria-current="page">{j.nama}</span> : <a href={j.href}>{j.nama}</a>}</li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(schemaBreadcrumb(semua))} />

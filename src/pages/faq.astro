@@ -1,0 +1,85 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+import Jejak from '@/components/Jejak.astro';
+import { SITUS } from '@/config/situs';
+import { linkWa } from '@/lib/pesan-wa';
+import { schemaFaq } from '@/lib/seo';
+
+// Jawaban yang mengandung [perlu konfirmasi] wajib dicek pemilik sebelum rilis.
+const GRUP = [
+  {
+    judul: 'Kue & penyimpanan',
+    daftar: [
+      { t: 'Berapa lama kue kering bisa bertahan?', j: 'Kue kering dalam toples tertutup rapat umumnya tetap renyah beberapa minggu pada suhu ruang. [perlu konfirmasi: daya tahan per jenis kue]' },
+      { t: 'Bagaimana cara menyimpan kue agar tetap renyah?', j: 'Simpan di toples tertutup rapat, jauh dari sinar matahari langsung dan tempat lembap. Tutup kembali toples setiap selesai mengambil kue. Cake dan kue basah sebaiknya disimpan di kulkas dan dihabiskan lebih cepat.' },
+      { t: 'Apa bedanya kemasan Mika dan Toples?', j: 'Mika adalah kemasan plastik praktis untuk dinikmati sendiri. Toples (tabung, lonjong, bulat, segi 8, kaca) lebih rapat dan rapi untuk sajian tamu atau hadiah. Harga setiap kemasan tercantum di halaman produk.' },
+      { t: 'Apakah kue mengandung kacang, susu, telur, atau gluten?', j: 'Sebagian besar kue kering mengandung terigu, susu atau mentega, dan telur, dan beberapa mengandung kacang. Info alergen tercantum di setiap halaman produk. Bila kamu punya alergi, tanyakan dulu lewat WhatsApp.' },
+      { t: 'Apakah produk Teratai halal?', j: '[perlu konfirmasi] Status sertifikasi halal belum dicantumkan di website.' },
+    ],
+  },
+  {
+    judul: 'Pemesanan & pengiriman',
+    daftar: [
+      { t: 'Bagaimana cara memesan?', j: 'Pilih kue dan kemasan, tambahkan ke pesanan, lalu tekan "Kirim Pesanan via WhatsApp". Pesanan terkirim sebagai pesan WhatsApp yang sudah terisi, lalu admin membalas untuk konfirmasi stok dan pembayaran.' },
+      { t: 'Berapa hari sebelumnya saya harus memesan?', j: `Untuk kue yang tersedia di outlet, bisa diambil di hari yang sama sesuai stok. Hampers, pesanan musiman, dan partai besar dipesan minimal H-${SITUS.preorderHari}.` },
+      { t: 'Apakah bisa diantar?', j: 'Bisa, untuk area Makassar. Ongkos kirim dikonfirmasi admin lewat WhatsApp sesuai alamat. [perlu konfirmasi: kurir yang dipakai dan area layanan]' },
+      { t: 'Apakah bisa kirim ke luar kota?', j: 'Kue kering bisa dikirim ke luar kota dengan jasa ekspedisi, dikemas aman agar tidak mudah hancur. Cake dan kue basah tidak kami sarankan untuk dikirim jauh. [perlu konfirmasi: ekspedisi dan kebijakan pengiriman luar kota]' },
+    ],
+  },
+  {
+    judul: 'Pembayaran',
+    daftar: [
+      { t: 'Metode pembayaran apa saja yang diterima?', j: 'QRIS, transfer bank, dan tunai saat mengambil di outlet. Detail rekening dikirim oleh admin melalui WhatsApp. [perlu konfirmasi: bank yang tersedia]' },
+      { t: 'Apakah perlu DP untuk pre-order?', j: '[perlu konfirmasi] Kebijakan uang muka untuk hampers dan pesanan partai besar.' },
+      { t: 'Apakah harga di website sama dengan di outlet?', j: 'Harga di website adalah harga eceran dan dapat berubah sewaktu-waktu. Admin akan mengonfirmasi total akhir sebelum pembayaran.' },
+    ],
+  },
+];
+const semua = GRUP.flatMap((g) => g.daftar);
+// Schema FAQ hanya memuat jawaban yang sudah final (tanpa penanda)
+const schema = schemaFaq(semua.filter((q) => !q.j.includes('[perlu konfirmasi')));
+const tampil = (j: string) => j.replace(/\[perlu konfirmasi([^\]]*)\]/g, '<span class="tanda">[perlu konfirmasi$1]</span>');
+---
+<Base
+  judul="FAQ: Daya Tahan, Penyimpanan, Pengiriman & Pembayaran"
+  deskripsi="Pertanyaan umum tentang kue kering Teratai Cookies Makassar: daya tahan, cara simpan, pengiriman luar kota, dan pembayaran QRIS, transfer, atau tunai."
+  jsonLd={schema}
+>
+  <Jejak jejak={[{ nama: 'FAQ', href: '/faq/' }]} />
+  <header class="wadah kepala-halaman">
+    <span class="eyebrow">FAQ</span>
+    <h1>Pertanyaan yang sering ditanyakan</h1>
+    <p class="lead">Belum menemukan jawabannya? Tanyakan langsung lewat WhatsApp.</p>
+  </header>
+
+  <div class="wadah faq">
+    {GRUP.map((g) => (
+      <section aria-label={g.judul} class="faq__grup">
+        <h2>{g.judul}</h2>
+        {g.daftar.map((q) => (
+          <details class="faq__item">
+            <summary>{q.t}<Icon nama="bawah" ukuran={20} /></summary>
+            <p set:html={tampil(q.j)} />
+          </details>
+        ))}
+      </section>
+    ))}
+    <a class="btn btn--wa" href={linkWa(SITUS.whatsapp, 'Halo Teratai Cookies, saya mau bertanya.')} target="_blank" rel="noopener"><Icon nama="whatsapp" /> Tanya via WhatsApp</a>
+  </div>
+</Base>
+
+<style>
+  .faq { max-width: 780px; padding-bottom: 88px; }
+  .faq__grup { margin-bottom: 36px; }
+  .faq__grup h2 { font-size: 1.25rem; margin-bottom: 8px; }
+  .faq__item { border-bottom: 1px solid var(--garis); }
+  .faq__item summary {
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; cursor: pointer;
+    min-height: 60px; padding-block: 14px; font-weight: 600;
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__item summary :global(svg) { flex: none; color: var(--teks-2); transition: transform var(--durasi) var(--ease); }
+  .faq__item[open] summary :global(svg) { transform: rotate(180deg); }
+  .faq__item p { color: var(--teks-2); margin: 0 0 18px; max-width: 64ch; }
+</style>

@@ -1,0 +1,116 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+const NAV = [
+  { href: '/produk/', label: 'Produk' },
+  { href: '/hampers/', label: 'Hampers' },
+  { href: '/reseller/', label: 'Reseller' },
+  { href: '/outlet/', label: 'Outlet' },
+  { href: '/tentang/', label: 'Tentang' },
+  { href: '/faq/', label: 'FAQ' },
+];
+const path = Astro.url.pathname;
+const aktif = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+<header class="header" data-header>
+  <div class="wadah header__isi">
+    <a href="/" class="header__logo" aria-label="Teratai Cookies, ke beranda"><Logo /></a>
+
+    <nav class="header__nav" id="menu-utama" aria-label="Menu utama" data-menu>
+      <ul>
+        {NAV.map((n) => (
+          <li><a href={n.href} aria-current={aktif(n.href) ? 'page' : undefined}>{n.label}</a></li>
+        ))}
+      </ul>
+      <a href="/produk/" class="btn btn--penuh header__nav-cta">Pesan Sekarang</a>
+    </nav>
+
+    <div class="header__aksi">
+      <button type="button" class="ikon-btn" data-buka-keranjang aria-label="Buka pesanan">
+        <Icon nama="keranjang" />
+        <span class="ikon-btn__jumlah angka" data-jumlah-keranjang hidden>0</span>
+      </button>
+      <button type="button" class="ikon-btn header__menu-btn" aria-expanded="false" aria-controls="menu-utama" data-tombol-menu>
+        <Icon nama="menu" class="ikon-menu" />
+        <Icon nama="tutup" class="ikon-tutup" />
+        <span class="sr-only">Menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-tombol-menu]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const setMenu = (buka: boolean) => {
+    btn?.setAttribute('aria-expanded', String(buka));
+    menu?.classList.toggle('terbuka', buka);
+    document.documentElement.classList.toggle('kunci-scroll', buka);
+  };
+  btn?.addEventListener('click', () => setMenu(btn.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  matchMedia('(min-width: 960px)').addEventListener('change', () => setMenu(false));
+  const onScroll = () => header?.classList.toggle('header--gulir', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+<style>
+  .header {
+    position: sticky; top: 0; z-index: 40; height: var(--header-h);
+    background: rgb(251 248 244 / 0.92); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid transparent; transition: border-color var(--durasi), box-shadow var(--durasi);
+  }
+  :global(.header--gulir) { border-bottom-color: var(--garis); }
+  .header__isi { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .header__logo { text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
+  .header__aksi { display: flex; align-items: center; gap: 4px; }
+
+  .ikon-btn {
+    position: relative; display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 999px;
+    border: 0; background: transparent; cursor: pointer; color: var(--espresso); transition: background var(--durasi);
+  }
+  .ikon-btn:hover { background: var(--cream); }
+  .ikon-btn__jumlah {
+    position: absolute; top: 4px; right: 2px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+    background: var(--tombol); color: #fff; font-size: 0.6875rem; font-weight: 700; display: grid; place-items: center;
+    border: 2px solid var(--cream-muda);
+  }
+  .ikon-btn__jumlah[hidden] { display: none; }
+  .header__menu-btn :global(.ikon-tutup) { display: none; }
+  .header__menu-btn[aria-expanded='true'] :global(.ikon-tutup) { display: block; }
+  .header__menu-btn[aria-expanded='true'] :global(.ikon-menu) { display: none; }
+
+  /* mobile: panel penuh */
+  .header__nav {
+    position: fixed; inset: var(--header-h) 0 0 0; background: var(--cream-muda); padding: 16px var(--gutter) 32px;
+    display: flex; flex-direction: column; gap: 24px; overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity var(--durasi) var(--ease), transform var(--durasi) var(--ease), visibility 0s linear var(--durasi);
+  }
+  .header__nav:global(.terbuka) { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .header__nav ul { list-style: none; margin: 0; padding: 0; }
+  .header__nav li a {
+    display: flex; align-items: center; min-height: 56px; border-bottom: 1px solid var(--garis);
+    font-family: var(--font-judul); font-size: 1.375rem; font-weight: 600; text-decoration: none; letter-spacing: -0.01em;
+  }
+  .header__nav a[aria-current='page'] { color: var(--teks-aksen); }
+  :global(.kunci-scroll) { overflow: hidden; }
+
+  @media (min-width: 960px) {
+    .header__menu-btn, .header__nav-cta { display: none; }
+    .header__nav {
+      position: static; opacity: 1; visibility: visible; transform: none; padding: 0; background: none;
+      flex-direction: row; overflow: visible; margin-left: auto;
+    }
+    .header__nav ul { display: flex; gap: 4px; }
+    .header__nav li a {
+      min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; font-family: var(--font-teks);
+      font-size: 0.9375rem; font-weight: 500; color: var(--teks-2); transition: color var(--durasi), background var(--durasi);
+    }
+    .header__nav li a:hover { color: var(--espresso); background: var(--cream); }
+    .header__nav a[aria-current='page'] { color: var(--espresso); background: var(--cream); }
+  }
+</style>

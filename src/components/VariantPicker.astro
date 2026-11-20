@@ -1,0 +1,116 @@
+---
+/** Pemilih kemasan/varian + jumlah + "Tambah ke pesanan". Harga berubah sesuai varian. */
+import type { Produk } from '@/lib/types';
+import { rupiah } from '@/lib/pesan-wa';
+import Icon from './Icon.astro';
+
+interface Props { produk: Produk }
+const { produk: p } = Astro.props;
+const awal = p.varian[0];
+const tunggal = p.varian.length === 1;
+const labelHarga = (h: number | null) => (h == null ? 'Tanya harga' : rupiah(h));
+---
+<form class="varian" data-pemilih data-slug={p.slug} data-nama={p.nama}>
+  <p class="varian__harga harga" aria-live="polite">
+    <span data-harga-tampil>{labelHarga(awal.harga)}</span>
+    {!tunggal && <span class="varian__harga-ket" data-varian-tampil>{awal.nama}</span>}
+  </p>
+
+  {!tunggal && (
+    <fieldset class="varian__grup">
+      <legend>Pilih {p.labelVarian.toLowerCase()}</legend>
+      <div class="varian__opsi">
+        {p.varian.map((v, i) => (
+          <label class="varian__item">
+            <input type="radio" name="varian" value={v.id} checked={i === 0} data-harga={v.harga ?? ''} data-label={v.nama} />
+            <span class="varian__nama">{v.nama}</span>
+            <span class="varian__nilai harga">{labelHarga(v.harga)}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  )}
+  {tunggal && <input type="hidden" name="varian" value={awal.id} data-harga={awal.harga ?? ''} data-label={awal.nama} />}
+
+  <div class="varian__beli">
+    <div class="bidang varian__jumlah">
+      <label for={`jumlah-${p.slug}`} class="sr-only">Jumlah</label>
+      <div class="stepper">
+        <button type="button" data-langkah="-1" aria-label="Kurangi jumlah">−</button>
+        <input id={`jumlah-${p.slug}`} name="jumlah" type="number" inputmode="numeric" min="1" max="99" value="1" class="angka" />
+        <button type="button" data-langkah="1" aria-label="Tambah jumlah">+</button>
+      </div>
+    </div>
+    <button type="submit" class="btn varian__tambah">
+      <Icon nama="keranjang" /> Tambah ke pesanan
+    </button>
+  </div>
+  <p class="varian__status" role="status" data-status></p>
+</form>
+
+<script>
+  import { rupiah } from '@/lib/pesan-wa';
+  document.querySelectorAll<HTMLFormElement>('[data-pemilih]').forEach((form) => {
+    const tampilHarga = form.querySelector<HTMLElement>('[data-harga-tampil]')!;
+    const tampilVarian = form.querySelector<HTMLElement>('[data-varian-tampil]');
+    const jumlah = form.querySelector<HTMLInputElement>('[name=jumlah]')!;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const terpilih = () =>
+      form.querySelector<HTMLInputElement>('[name=varian]:checked') ?? form.querySelector<HTMLInputElement>('input[type=hidden][name=varian]')!;
+    const hargaDari = (el: HTMLInputElement) => (el.dataset.harga ? Number(el.dataset.harga) : null);
+    const n = () => Math.min(99, Math.max(1, Math.floor(Number(jumlah.value) || 1)));
+
+    const perbarui = () => {
+      const v = terpilih();
+      const h = hargaDari(v);
+      tampilHarga.textContent = h == null ? 'Tanya harga' : rupiah(h * n());
+      if (tampilVarian) tampilVarian.textContent = n() > 1 ? `${v.dataset.label} × ${n()}` : v.dataset.label ?? '';
+    };
+    form.addEventListener('change', perbarui);
+    jumlah.addEventListener('input', perbarui);
+    jumlah.addEventListener('blur', () => { jumlah.value = String(n()); perbarui(); });
+    form.querySelectorAll<HTMLButtonElement>('[data-langkah]').forEach((b) =>
+      b.addEventListener('click', () => { jumlah.value = String(Math.min(99, Math.max(1, n() + Number(b.dataset.langkah)))); perbarui(); }));
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = terpilih();
+      window.dispatchEvent(new CustomEvent('keranjang:tambah', {
+        detail: {
+          slug: form.dataset.slug, nama: form.dataset.nama, varianId: v.value, varian: v.dataset.label,
+          harga: hargaDari(v), jumlah: n(), buka: true,
+        },
+      }));
+      status.textContent = `${form.dataset.nama} (${v.dataset.label}) × ${n()} ditambahkan ke pesanan.`;
+    });
+    perbarui();
+  });
+</script>
+
+<style>
+  .varian { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .varian__harga { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+  .varian__harga [data-harga-tampil] { font-family: var(--font-judul); font-size: 1.875rem; font-weight: 700; letter-spacing: -0.02em; }
+  .varian__harga-ket { color: var(--teks-2); font-size: 0.9375rem; }
+  .varian__grup { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .varian__grup legend { font-weight: 600; font-size: 0.9375rem; margin-bottom: 10px; padding: 0; }
+  .varian__opsi { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .varian__item {
+    position: relative; display: grid; gap: 2px; padding: 12px 14px; min-height: 64px; border-radius: var(--r-sm);
+    border: 1.5px solid var(--garis-tegas); background: #fff; cursor: pointer;
+    transition: border-color var(--durasi), background var(--durasi), box-shadow var(--durasi);
+  }
+  .varian__item:hover { border-color: #cdbba8; }
+  .varian__item input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .varian__item:has(input:checked) { border-color: var(--tombol); background: #fdf6f2; box-shadow: inset 0 0 0 1px var(--tombol); }
+  .varian__item:has(input:focus-visible) { outline: 3px solid var(--terracotta-tua); outline-offset: 2px; }
+  .varian__nama { font-weight: 600; font-size: 0.9rem; line-height: 1.3; }
+  .varian__nilai { font-size: 0.8125rem; color: var(--teks-2); }
+  .varian__beli { display: flex; gap: 10px; align-items: center; }
+  .varian__jumlah { margin: 0; }
+  .varian__tambah { flex: 1; min-width: 0; min-height: 52px; white-space: normal; padding-inline: 16px; }
+  @media (max-width: 380px) { .varian__tambah :global(svg) { display: none; } }
+  .varian__status { margin: 0; font-size: 0.875rem; color: #1f6b43; min-height: 1.4em; }
+  .varian__status:empty { display: none; }
+  @media (min-width: 1024px) { .varian__opsi { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>
