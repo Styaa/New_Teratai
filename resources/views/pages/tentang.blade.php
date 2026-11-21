@@ -15,10 +15,10 @@
     <section class="hero">
         <div class="wadah hero__grid">
             <div>
-                <h1>Dari dapur <span class="aksen">rumah</span> di Makassar.</h1>
-                <p class="lead">{{ config('teratai.nama_lengkap') }} adalah usaha keluarga yang membuat kue kering, cake, dan hampers untuk pelanggan di Makassar.</p>
+                <h1 data-anim>Dari dapur <span class="aksen">rumah</span> di Makassar.</h1>
+                <p class="lead" data-anim style="--d: 90ms">{{ config('teratai.nama_lengkap') }} adalah usaha keluarga yang membuat kue kering, cake, dan hampers untuk pelanggan di Makassar.</p>
             </div>
-            <x-foto :foto="['src' => null, 'alt' => 'Suasana dapur Teratai saat membuat kue kering', 'label' => 'Suasana dapur Teratai']" jenis="dapur" rasio="4 / 3" eager sizes="(min-width: 900px) 560px, 100vw" />
+            <x-foto :foto="['src' => null, 'alt' => 'Suasana dapur Teratai saat membuat kue kering', 'label' => 'Suasana dapur Teratai']" jenis="dapur" rasio="4 / 3" eager data-anim="foto" sizes="(min-width: 900px) 560px, 100vw" />
         </div>
     </section>
 

@@ -46,10 +46,22 @@ export function initKatalog() {
     }
   }
 
-  chips.forEach((c) => c.addEventListener('click', () => { kategori = c.dataset.kategori ?? ''; terapkan(); }));
+  // Perubahan filter/urutan dianimasikan bila browser mendukung View Transitions:
+  // kartu yang tetap tampil bergeser ke posisi baru, yang hilang/muncul memudar.
+  kartu.forEach((k, i) => (k.dataset.vt = `kartu-${i}`));
+  const MAKS = 30; // batasi jumlah elemen yang dianimasikan agar tetap ringan di HP
+  const beriNama = () => kartu.filter((k) => !k.hidden).slice(0, MAKS).forEach((k) => (k.style.viewTransitionName = k.dataset.vt));
+  const hapusNama = () => kartu.forEach((k) => (k.style.viewTransitionName = ''));
+  const halus = (fn) => {
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return fn();
+    beriNama();
+    const vt = document.startViewTransition(() => { hapusNama(); fn(); beriNama(); });
+    vt.finished.finally(hapusNama);
+  };
+  chips.forEach((c) => c.addEventListener('click', () => { kategori = c.dataset.kategori ?? ''; halus(terapkan); }));
   let t;
   cari.addEventListener('input', () => { clearTimeout(t); t = setTimeout(terapkan, 120); });
-  urut.addEventListener('change', () => terapkan());
+  urut.addEventListener('change', () => halus(terapkan));
   document.querySelector('[data-reset]')?.addEventListener('click', () => { kategori = ''; cari.value = ''; terapkan(); cari.focus(); });
   terapkan(false);
 }

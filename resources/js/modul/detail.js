@@ -23,7 +23,13 @@ export function initDetail() {
     const perbarui = () => {
       const v = terpilih();
       const h = hargaDari(v);
-      tampilHarga.textContent = h == null ? 'Tanya harga' : rupiah(h * n());
+      const teks = h == null ? 'Tanya harga' : rupiah(h * n());
+      if (tampilHarga.textContent !== teks) {
+        tampilHarga.textContent = teks;
+        tampilHarga.classList.remove('ganti');
+        void tampilHarga.offsetWidth; // ulang animasi
+        tampilHarga.classList.add('ganti');
+      }
       if (tampilVarian) tampilVarian.textContent = `(${v.dataset.label}${n() > 1 ? ` × ${n()}` : ''})`;
     };
     form.addEventListener('change', perbarui);
@@ -47,6 +53,12 @@ export function initDetail() {
         detail: { slug: form.dataset.slug, nama: form.dataset.nama, varianId: v.value, varian: v.dataset.label, harga: hargaDari(v), jumlah: n(), buka: true },
       }));
       status.textContent = `${form.dataset.nama} (${v.dataset.label}) × ${n()} ditambahkan ke pesanan.`;
+      const tombol = form.querySelector('button[type=submit]');
+      if (tombol && !tombol.dataset.teks) {
+        tombol.dataset.teks = tombol.innerHTML;
+        tombol.textContent = '✓ Ditambahkan';
+        setTimeout(() => { tombol.innerHTML = tombol.dataset.teks; delete tombol.dataset.teks; }, 1600);
+      }
     });
     perbarui();
   });

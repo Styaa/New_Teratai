@@ -56,7 +56,32 @@ Prinsip utamanya: **foto produk jadi bintang, antarmuka mundur ke belakang.** Mi
 
 **Footer.** Terang, dengan garis atas. Kolom: brand + deskripsi, lokasi outlet, menu, hubungi. Baris bawahnya berisi hak cipta di kiri dan "Makassar, Sulawesi Selatan" di kanan.
 
-## 4. Yang sengaja TIDAK diambil dari referensi
+## 4. Motion
+
+Gerak dipakai untuk menuntun mata dan memberi umpan balik, bukan sebagai hiasan. Aturannya:
+- durasi pendek, 200–700 ms;
+- jarak gerak kecil, 8–16 px;
+- hanya `opacity` dan `transform`, sehingga ringan untuk GPU;
+- setiap animasi berjalan sekali saja;
+- tanpa library;
+- **mati total** bila pengguna memilih "kurangi gerakan" (`prefers-reduced-motion`).
+
+| Momen | Gerak | Di mana |
+|---|---|---|
+| Halaman dibuka | Judul, teks, lalu tombol hero naik berurutan (jeda 90 ms). Foto hero memudar dari skala 1,035 | `.hero [data-anim]` (CSS) |
+| Menggulir | Judul bagian, kartu, dan blok teks naik 16 px sekali, berurutan per baris (jeda 70 ms, maks 3 langkah). Elemen di layar pertama tidak ikut, supaya tidak berkedip dan tidak memperlambat LCP | `resources/js/modul/motion.js` |
+| Pindah halaman | Fade antarhalaman. Foto kartu "terbang" ke foto besar di halaman detail, dan sebaliknya saat kembali | View Transitions; browser yang belum mendukung pindah halaman seperti biasa |
+| Filter & urutan katalog | Kartu bergeser ke posisi baru (maks 30 kartu dianimasikan) | `modul/katalog.js` |
+| Header | Bersembunyi saat menggulir ke bawah, muncul saat menggulir ke atas. Garis bawah menu tumbuh saat hover | `modul/header.js` |
+| Pilih kemasan | Harga memudar ke nilai baru, garis kiri baris terpilih meluncur | `modul/detail.js` |
+| Tambah ke pesanan | Tombol berubah menjadi "✓ Ditambahkan" selama 1,6 detik, dan angka di ikon keranjang berdenyut | `modul/detail.js`, `modul/keranjang.js` |
+| Laci keranjang | Masuk dan keluar dengan geser, latar memudar | `modul/keranjang.js` |
+| Akordeon | Membuka dan menutup dengan mulus (browser baru) | CSS `::details-content` |
+| Galeri, menu HP | Foto berganti dengan fade. Tautan menu muncul berurutan | CSS |
+
+Hal yang sengaja tidak dipakai: carousel otomatis, parallax, efek kursor, animasi yang berulang terus, dan animasi "terbang ke keranjang".
+
+## 5. Yang sengaja TIDAK diambil dari referensi
 
 Referensi berisi data contoh yang belum tentu benar. Data ini tidak dipakai sampai dikonfirmasi pemilik:
 
@@ -66,6 +91,6 @@ Referensi berisi data contoh yang belum tentu benar. Data ini tidak dipakai samp
 - Nama produk yang berbeda dari database (mis. "Nastar Wisman Teratai", "Kastengel Edam Keju Tua")
 - Teks yang tertempel di dalam foto contoh (judul katalog, tangkapan layar)
 
-## 5. Foto
+## 6. Foto
 
 Arah fotonya sama dengan referensi: cahaya alami, piring keramik dan talenan kayu, latar linen atau cream, close-up tekstur, dan toples bermerek Teratai. Hindari foto yang berisi teks atau tangkapan layar (lihat kartu "Nastar Daun Premium" dan "Paket Hampers Raya" di referensi). Ukuran yang disarankan 1200×1500 px (4:5), format WebP.

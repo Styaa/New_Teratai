@@ -22,16 +22,16 @@
     <section class="hero">
         <div class="wadah hero__grid">
             <div>
-                <h1>Renyahnya bikin <span class="aksen">ingat</span> rumah.</h1>
-                <p class="lead">{{ config('teratai.deskripsi') }}</p>
-                <div class="hero__cta">
+                <h1 data-anim>Renyahnya bikin <span class="aksen">ingat</span> rumah.</h1>
+                <p class="lead" data-anim style="--d: 90ms">{{ config('teratai.deskripsi') }}</p>
+                <div class="hero__cta" data-anim style="--d: 180ms">
                     <a class="btn" href="{{ route('produk.index') }}">Pesan Sekarang</a>
                     <a class="tautan" href="{{ route('produk.index') }}">Lihat produk <x-icon nama="panah" /></a>
                 </div>
             </div>
             <div class="hero__media">
                 <x-foto :foto="['src' => null, 'alt' => 'Nastar dan kastengel Teratai di atas piring keramik, cahaya alami', 'label' => 'Hero: nastar & kastengel di piring keramik']"
-                        jenis="hero" rasio="4 / 3" eager sizes="(min-width: 900px) 560px, 100vw" />
+                        jenis="hero" rasio="4 / 3" eager data-anim="foto" sizes="(min-width: 900px) 560px, 100vw" />
             </div>
         </div>
     </section>

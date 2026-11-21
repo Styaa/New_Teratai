@@ -44,12 +44,20 @@ export function initKeranjang() {
         return d.toISOString().slice(0, 10);
     };
 
+    let jumlahSebelumnya = null;
     function render() {
         const n = item.reduce((s, i) => s + i.jumlah, 0);
         document.querySelectorAll('[data-jumlah-keranjang]').forEach((el) => {
             el.textContent = String(n);
             el.hidden = n === 0;
+            // Denyut kecil saat jumlah bertambah
+            if (jumlahSebelumnya !== null && n > jumlahSebelumnya) {
+                el.classList.remove('denyut');
+                void el.offsetWidth;
+                el.classList.add('denyut');
+            }
         });
+        jumlahSebelumnya = n;
         document
             .querySelectorAll('[data-buka-keranjang]')
             .forEach((b) => b.setAttribute('aria-label', n ? `Buka pesanan, ${n} item` : 'Buka pesanan'));
@@ -181,9 +189,17 @@ export function initKeranjang() {
             buka();
         }
     });
-    laci.querySelector('[data-tutup-laci]').addEventListener('click', () => laci.close());
+    // Tutup dengan animasi geser keluar (langsung tutup bila "kurangi gerakan").
+    const tutup = () => {
+      if (!laci.open || laci.classList.contains('menutup')) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return laci.close();
+      laci.classList.add('menutup');
+      setTimeout(() => { laci.classList.remove('menutup'); laci.close(); }, 200);
+    };
+    laci.addEventListener('cancel', (e) => { e.preventDefault(); tutup(); }); // tombol Esc
+    laci.querySelector('[data-tutup-laci]').addEventListener('click', tutup);
     laci.addEventListener('click', (e) => {
-        if (e.target === laci) laci.close();
+        if (e.target === laci) tutup();
     }); // klik backdrop
 
     window.addEventListener('keranjang:tambah', (e) => {

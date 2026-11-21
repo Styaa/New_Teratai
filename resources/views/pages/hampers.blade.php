@@ -16,15 +16,15 @@
     <section class="hero">
         <div class="wadah hero__grid">
             <div>
-                <h1>Hampers untuk setiap <span class="aksen">momen</span>.</h1>
-                <p class="lead">Kue kering pilihan dalam kemasan hadiah, untuk keluarga, relasi, dan kantor. Isi bisa disesuaikan dan setiap paket bisa dilengkapi kartu ucapan.</p>
-                <div class="hero__cta">
+                <h1 data-anim>Hampers untuk setiap <span class="aksen">momen</span>.</h1>
+                <p class="lead" data-anim style="--d: 90ms">Kue kering pilihan dalam kemasan hadiah, untuk keluarga, relasi, dan kantor. Isi bisa disesuaikan dan setiap paket bisa dilengkapi kartu ucapan.</p>
+                <div class="hero__cta" data-anim style="--d: 180ms">
                     <a class="btn" href="#paket">Lihat Paket</a>
                     <a class="tautan" href="#partai-besar">Pesanan kantor <x-icon nama="panah" /></a>
                 </div>
             </div>
             <x-foto :foto="['src' => null, 'alt' => 'Beberapa hampers Teratai tersusun dengan pita dan kartu ucapan', 'label' => 'Hampers tersusun + kartu ucapan']"
-                    jenis="hampers" rasio="4 / 3" eager sizes="(min-width: 900px) 560px, 100vw" />
+                    jenis="hampers" rasio="4 / 3" eager data-anim="foto" sizes="(min-width: 900px) 560px, 100vw" />
         </div>
     </section>
 

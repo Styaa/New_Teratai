@@ -4,7 +4,7 @@ import { initFormWa } from './modul/form-wa';
 import { initHeader } from './modul/header';
 import { initKatalog } from './modul/katalog';
 import { initKeranjang } from './modul/keranjang';
-import { initMuncul } from './modul/muncul';
+import { initMotion } from './modul/motion';
 import { initMusim } from './modul/musim';
 import { initRak } from './modul/rak';
 
@@ -16,4 +16,4 @@ initRak();
 initKatalog();
 initDetail();
 initFormWa();
-initMuncul();
+initMotion();
